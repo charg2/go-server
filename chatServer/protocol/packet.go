@@ -40,7 +40,6 @@ func (packet Packet) GetSessionInfo() (int32, uint64) {
 var _clientSessionHeaderSize int16
 var _ServerSessionHeaderSize int16
 
-// 클라이언트와 서버 파일 헤더 크기가 얼마나 되는지
 func Init_packet() {
 	_clientSessionHeaderSize = protocolInitHeaderSize()
 	_ServerSessionHeaderSize = protocolInitHeaderSize()

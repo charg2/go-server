@@ -14,7 +14,6 @@ import (
 	"main/roomPkg"
 )
 
-
 type configAppServer struct {
 	GameName                   string
 
@@ -28,12 +27,11 @@ type ChatServer struct {
 	IP          string
 	Port        int
 
-	PacketChan	chan protocol.Packet //
+	PacketChan	chan protocol.Packet
 
 	RoomMgr *roomPkg.RoomManager
 }
 
-// 채팅 서버 시작 지점.
 func createAnsStartServer(netConfig NetworkConfig, appConfig configAppServer) {
 	NTELIB_LOG_INFO("CreateServer !!!")
 
@@ -44,12 +42,12 @@ func createAnsStartServer(netConfig NetworkConfig, appConfig configAppServer) {
 		return
 	}
 
-	protocol.Init_packet() // 패킷 헤더 크기 초기화
+	protocol.Init_packet();
 
-	maxUserCount := appConfig.RoomMaxCount * appConfig.RoomMaxUserCount // 최대 동접
-	connectedSessions.Init(netConfig.MaxSessionCount, maxUserCount) // 세션 매니저 초기화
+	maxUserCount := appConfig.RoomMaxCount * appConfig.RoomMaxUserCount
+	connectedSessions.Init(netConfig.MaxSessionCount, maxUserCount)
 
-	server.PacketChan = make(chan protocol.Packet, 256) // 채널 크기 256, 이걸 안정하면 blocking 된다.
+	server.PacketChan = make(chan protocol.Packet, 256)
 
 	roomConfig := roomPkg.RoomConfig{
 		appConfig.RoomStartNum,
@@ -59,7 +57,6 @@ func createAnsStartServer(netConfig NetworkConfig, appConfig configAppServer) {
 	server.RoomMgr = roomPkg.NewRoomManager(roomConfig)
 
 
-	// 패킷 처리 고루틴 함수 실행
 	go server.PacketProcess_goroutine()
 
 
@@ -74,7 +71,7 @@ func createAnsStartServer(netConfig NetworkConfig, appConfig configAppServer) {
 
 
 	NetLibInitNetwork(PACKET_HEADER_SIZE, PACKET_HEADER_SIZE)
-	NetLibStartNetwork(&netConfig, networkFunctor) // 서버가 시작 되는 부분 accept 걸고, concurrent 모델 처럼 고루틴을 생성해서 IO를 시작한다.
+	NetLibStartNetwork(&netConfig, networkFunctor)
 
 	server.Stop()
 }
@@ -101,15 +98,13 @@ func (server *ChatServer) Stop() {
 	time.Sleep(1 * time.Second)
 }
 
-// 연결 됬을시 세선 매니저에 추가.
+
 func (server *ChatServer) OnConnect(sessionIndex int32, sessionUniqueID uint64) {
 	NTELIB_LOG_INFO("client OnConnect", zap.Int32("sessionIndex",sessionIndex), zap.Uint64("sessionUniqueId",sessionUniqueID))
 
 	connectedSessions.AddSession(sessionIndex, sessionUniqueID)
 }
 
-// 데이터 수신시 로그를 직고
-// 바이트 배열의  패킬을 만들어 채널로 전송
 func (server *ChatServer) OnReceive(sessionIndex int32, sessionUniqueID uint64, data []byte) bool {
 	NTELIB_LOG_DEBUG("OnReceive", zap.Int32("sessionIndex", sessionIndex),
 		zap.Uint64("sessionUniqueID", sessionUniqueID),
@@ -119,14 +114,12 @@ func (server *ChatServer) OnReceive(sessionIndex int32, sessionUniqueID uint64, 
 	return true
 }
 
-
 func (server *ChatServer) OnClose(sessionIndex int32, sessionUniqueID uint64) {
 	NTELIB_LOG_INFO("client OnCloseClientSession", zap.Int32("sessionIndex", sessionIndex), zap.Uint64("sessionUniqueId", sessionUniqueID))
 
 	server.disConnectClient(sessionIndex, sessionUniqueID)
 }
 
-// 세션 상태에 따라 종료 처리를 한다.
 func (server *ChatServer) disConnectClient(sessionIndex int32, sessionUniqueId uint64) {
 	// 로그인도 안한 유저라면 그냥 여기서 처리한다.
 	// 방 입장을 안한 유저라면 여기서 처리해도 괜찮지만 아래로 넘긴다.

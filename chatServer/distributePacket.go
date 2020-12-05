@@ -13,7 +13,7 @@ import (
 func (server *ChatServer) DistributePacket(sessionIndex int32,
 	sessionUniqueId uint64,
 	packetData []byte,
-) {
+	) {
 	packetID := protocol.PeekPacketID(packetData)
 	bodySize, bodyData := protocol.PeekPacketBody(packetData)
 	NTELIB_LOG_DEBUG("DistributePacket", zap.Int32("sessionIndex", sessionIndex), zap.Uint64("sessionUniqueId", sessionUniqueId), zap.Int16("PacketID", packetID))
@@ -52,7 +52,7 @@ func (server *ChatServer) PacketProcess_goroutine_Impl() bool {
 
 
 	for {
-		packet := <-server.PacketChan // connect disconnect 등의 패킷을 받아서 처리한다.
+		packet := <-server.PacketChan
 		sessionIndex := packet.UserSessionIndex
 		sessionUniqueId := packet.UserSessionUniqueId
 		bodySize := packet.DataSize
@@ -82,7 +82,7 @@ func ProcessPacketLogin(sessionIndex int32,
 		return
 	}
 
-	userID := bytes.Trim(request.UserID[:], "\x00")
+	userID := bytes.Trim(request.UserID[:], "\x00");
 
 	if len(userID) <= 0 {
 		_sendLoginResult(sessionIndex, sessionUniqueId, protocol.ERROR_CODE_LOGIN_USER_INVALID_ID)

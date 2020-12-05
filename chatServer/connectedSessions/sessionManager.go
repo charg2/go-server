@@ -11,9 +11,9 @@ import (
 
 // 스레드 세이프 해야 한다.
 type Manager struct {
-	_UserIDsessionMap *sync.Map // thread sfae 한 맵 자료구조.
+	_UserIDsessionMap *sync.Map
 
-	_maxSessionCount int32		// session coutn
+	_maxSessionCount int32
 	_sessionList     []*session
 
 	_maxUserCount int32
@@ -23,8 +23,6 @@ type Manager struct {
 
 var _manager Manager
 
-
-// 세션 매니저 초기화
 func Init(maxSessionCount int, maxUserCount int32) bool {
 	_manager._UserIDsessionMap = new(sync.Map)
 	_manager._maxUserCount = maxUserCount
@@ -117,7 +115,7 @@ func SetLogin(sessionIndex int32, sessionUniqueId uint64, userID []byte, curTime
 	_manager._sessionList[sessionIndex].SetUser(sessionUniqueId, userID, curTimeSec)
 	_manager._UserIDsessionMap.Store(newUserID, _manager._sessionList[sessionIndex])
 
-	atomic.AddInt32(&_manager._currentLoginUserCount, 1) // atomic한 카운트
+	atomic.AddInt32(&_manager._currentLoginUserCount, 1)
 	return true
 }
 
