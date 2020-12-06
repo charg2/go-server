@@ -101,6 +101,21 @@ func GetUserID(sessionIndex int32) ([]byte, bool) {
 	return _manager._sessionList[sessionIndex].getUserID(), true
 }
 
+/*
+
+session idx 가 유요한지 검사하고
+userID를 string으로 변경후 구하고
+
+sync map load
+return value value, bool
+
+ID 중복 로그인 확인.
+
+session 설정 및 id map 에 저장.
+
+login user count 증감.
+
+ */
 func SetLogin(sessionIndex int32, sessionUniqueId uint64, userID []byte, curTimeSec int64) bool {
 	if _validSessionIndex(sessionIndex) == false {
 		NTELIB_LOG_ERROR("Invalid sessionIndex", zap.Int32("sessionIndex", sessionIndex))

@@ -78,6 +78,8 @@ func (room *baseRoom) settingPacketFunction() {
 	room._addPacketFunction(protocol.PACKET_ID_ROOM_ENTER_REQ, room._packetProcess_EnterUser)
 	room._addPacketFunction(protocol.PACKET_ID_ROOM_LEAVE_REQ, room._packetProcess_LeaveUser)
 	room._addPacketFunction(protocol.PACKET_ID_ROOM_CHAT_REQ, room._packetProcess_Chat)
+	room._addPacketFunction(protocol.PACKET_ID_ROOM_CHAT_WHISPER_REQ, room._packetProcess_Whisper)
+	room._addPacketFunction(protocol.PACKET_ID_ROOM_INVITE_REQ, room._packetProcess_InviteUser)
 	room._addPacketFunction(protocol.PACKET_ID_ROOM_RELAY_REQ, room._packetProcess_Relay)
 }
 

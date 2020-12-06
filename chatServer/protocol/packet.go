@@ -433,3 +433,51 @@ func NotifyErrorPacket(sessionIndex int32, sessionUniqueId uint64, errorCode int
 	sendBuf, _ := response.EncodingPacket(errorCode)
 	NetLibIPostSendToClient(sessionIndex, sessionUniqueId, sendBuf)
 }
+
+//
+type RoomInviteReqPacket struct {
+	IdLen           int16
+	Id              []byte
+}
+
+func (request RoomInviteReqPacket) EncodingPacket() ([]byte, int16) {
+
+
+	return nil, 0
+}
+
+func (response *RoomInviteReqPacket) Decoding(bodyData []byte) bool {
+	reader := MakeReader(bodyData, true)
+	response.IdLen, _ = reader.ReadS16()
+	response.Id = reader.ReadBytes(int(response.IdLen))
+	return true
+}
+
+
+type RoomInviteResPacket struct {
+	result			bool
+}
+
+
+type RoomInviteNtfPacket struct {
+	IdLen           int16
+	Id              []byte
+	RoomNumber		int16
+}
+
+type RoomWhisperReqPacket struct {
+	IdLen           int16
+	Id              []byte
+	MsgLen          int16
+	Msg             []byte
+}
+
+
+type RoomWhisperResPacket struct {
+	IdLen           int16
+	Id              []byte
+	MsgLen          int16
+	Msg             []byte
+}
+
+
